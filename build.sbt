@@ -4,12 +4,24 @@ ThisBuild / scalaVersion := scala212
 ThisBuild / organization := "com.eed3si9n.jarjarabrams"
 ThisBuild / organizationName := "eed3si9n"
 ThisBuild / organizationHomepage := Some(url("http://eed3si9n.com/"))
-ThisBuild / version := "0.3.2-SNAPSHOT"
+ThisBuild / version := "0.3.2"
 ThisBuild / description := "utility to shade Scala libraries"
 ThisBuild / licenses := Seq(
   "Apache 2" -> new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")
 )
 ThisBuild / homepage := Some(url("https://github.com/eed3si9n/jarjar-abrams"))
+
+
+ThisBuild / publishMavenStyle := true
+
+ThisBuild / publishTo := Some("GitHub Package Registry" at "https://maven.pkg.github.com/ramencloud/jarjar-abrams")
+ThisBuild / credentials ++= {
+  (sys.env.get("PUBLISH_TO_GITHUB_USERNAME"), sys.env.get("PUBLISH_TO_GITHUB_TOKEN")) match {
+    case (Some(user), Some(pass)) =>
+      Seq(Credentials("GitHub Package Registry", "maven.pkg.github.com", user, pass))
+    case _ => Nil
+  }
+}
 
 lazy val jarjar = project
   .in(file("./jarjar"))
@@ -17,7 +29,7 @@ lazy val jarjar = project
   .settings(Defaults.itSettings)
   .settings(nocomma {
     name := "jarjar"
-    version := "1.7.3-SNAPSHOT"
+    version := "1.7.3"
     crossPaths := false
     autoScalaLibrary := false
     libraryDependencies ++= Seq(
@@ -106,9 +118,3 @@ ThisBuild / developers := List(
 ThisBuild / pomIncludeRepository := { _ =>
   false
 }
-ThisBuild / publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
-  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-}
-ThisBuild / publishMavenStyle := true
